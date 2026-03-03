@@ -26,8 +26,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['.onrender.com']
-
+ALLOWED_HOSTS = [
+    'qr.brandonhotelandapartments.com',
+    '.onrender.com'
+]
 
 # Application definition
 
