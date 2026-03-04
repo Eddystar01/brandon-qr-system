@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-black text-white p-8">
+<body class="bg-[#0f0f0f] text-white p-8">
 
 <h1 class="text-3xl mb-8 font-bold">Kitchen Dashboard</h1>
 
@@ -12,36 +12,47 @@
 
 {% for order in orders %}
 <div id="order-{{ order.id }}"
-    class="bg-[#1a1a1a] p-6 rounded-xl transition-all duration-500">
+class="bg-[#1a1a1a] p-6 rounded-xl shadow-lg border border-gray-800">
 
-    <h2 class="text-xl font-semibold mb-2">
-        Order #{{ order.id }}
-    </h2>
+<h2 class="text-xl font-semibold mb-1">
+Order #{{ order.id }}
+</h2>
 
-    <p class="mb-2">Table {{ order.table.number }}</p>
-    <p class="mb-4 text-yellow-400">{{ order.status|title }}</p>
+<p class="text-gray-400 mb-1">Table {{ order.table.number }}</p>
 
-    <ul class="mb-4">
-        {% for item in order.orderitem_set.all %}
-        <li>
-            {{ item.item.name }} x{{ item.quantity }}
-        </li>
-        {% endfor %}
-    </ul>
+<p class="text-sm text-gray-500 mb-3">
+<span class="order-time" data-time="{{ order.created_at }}"></span>
+</p>
 
-    <div class="flex gap-3">
-        {% if order.status == 'confirmed' %}
-            <a href="/update-status/{{ order.id }}/preparing/"
-               class="bg-purple-600 px-4 py-2 rounded">
-                Start Preparing
-            </a>
-        {% elif order.status == 'preparing' %}
-            <a href="/update-status/{{ order.id }}/served/"
-               class="bg-green-600 px-4 py-2 rounded">
-                Mark Served
-            </a>
-        {% endif %}
-    </div>
+<p class="mb-4 font-semibold
+{% if order.status == 'confirmed' %} text-blue-400
+{% elif order.status == 'preparing' %} text-purple-400
+{% endif %}">
+{{ order.status|title }}
+</p>
+
+<ul class="mb-4 text-gray-300">
+{% for item in order.orderitem_set.all %}
+<li>{{ item.item.name }} ×{{ item.quantity }}</li>
+{% endfor %}
+</ul>
+
+<div class="flex gap-3">
+
+{% if order.status == 'confirmed' %}
+<a href="/update-status/{{ order.id }}/preparing/"
+class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">
+Start Preparing
+</a>
+
+{% elif order.status == 'preparing' %}
+<a href="/update-status/{{ order.id }}/served/"
+class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
+Mark Served
+</a>
+{% endif %}
+
+</div>
 
 </div>
 {% endfor %}
@@ -49,50 +60,65 @@
 </div>
 
 <audio id="notification-sound">
-    <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" type="audio/ogg">
+<source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
 </audio>
 
 <script>
-    let highestOrderId = 0
 
-    // get highest order currently displayed
-    document.querySelectorAll("[id^='order-']").forEach(el => {
-        const id = parseInt(el.id.replace("order-", ""))
-        if (id > highestOrderId) {
-            highestOrderId = id
-        }
-    })
+let highestOrderId = 0
 
-    function checkNewOrders() {
-        fetch("/kitchen-data/")
-            .then(res => res.json())
-            .then(data => {
+document.querySelectorAll("[id^='order-']").forEach(el=>{
+const id = parseInt(el.id.replace("order-",""))
+if(id>highestOrderId) highestOrderId=id
+})
 
-                data.orders.forEach(order => {
-                    if (order.id > highestOrderId) {
+function checkNewOrders(){
 
-                        highestOrderId = order.id
+fetch("/kitchen-data/")
+.then(res=>res.json())
+.then(data=>{
 
-                        // Play sound (after user interaction)
-                        document.getElementById("notification-sound").play()
+data.orders.forEach(order=>{
+if(order.id>highestOrderId){
 
-                        // Delay reload slightly so sound plays
-                        setTimeout(() => {
-                            location.reload()
-                        }, 800)
-                    }
-                })
-            })
-    }
+highestOrderId=order.id
 
-    // IMPORTANT: user must click once to enable sound
-    document.body.addEventListener("click", () => {
-        document.getElementById("notification-sound").play().then(() => {
-            document.getElementById("notification-sound").pause()
-        }).catch(() => {})
-    }, { once: true })
+document.getElementById("notification-sound").play()
 
-    setInterval(checkNewOrders, 5000)
+setTimeout(()=>{
+location.reload()
+},800)
+
+}
+
+})
+
+})
+
+}
+
+setInterval(checkNewOrders,5000)
+
+/* order timer */
+
+function updateTimers(){
+
+document.querySelectorAll(".order-time").forEach(el=>{
+
+const created = new Date(el.dataset.time)
+const now = new Date()
+
+const diff = Math.floor((now-created)/60000)
+
+el.innerText = diff+" min ago"
+
+})
+
+}
+
+setInterval(updateTimers,60000)
+updateTimers()
+
 </script>
 
 </body>

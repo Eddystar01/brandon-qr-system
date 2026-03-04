@@ -1,57 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
-<script>
-    setInterval(() => {
-        location.reload()
-    }, 5000)  // refresh every 5 seconds
-</script>
+<body class="bg-[#0f0f0f] min-h-screen flex items-center justify-center">
 
-<body class="bg-gray-100 dark:bg-[#0f0f0f] min-h-screen flex items-center justify-center">
+<div class="bg-[#1a1a1a] p-10 rounded-xl shadow-xl text-center w-[420px]">
 
-<div class="bg-white dark:bg-[#1a1a1a] p-10 rounded-xl shadow-xl text-center w-[400px]">
+<h1 class="text-2xl font-semibold text-white mb-6">
+Order #{{ order.id }}
+</h1>
 
-    <h1 class="text-2xl font-semibold dark:text-white mb-6">
-        Order #{{ order.id }}
-    </h1>
+<p class="text-gray-400 mb-4">
+Table {{ order.table.number }}
+</p>
 
-    <p class="text-lg dark:text-gray-300 mb-4">
-        Table {{ order.table.number }}
-    </p>
+<div class="text-xl font-semibold
 
-    <div class="text-xl font-medium 
-        {% if order.status == 'pending_payment' %}
-            text-red-500
-        {% elif order.status == 'confirmed' %}
-            text-blue-500
-        {% elif order.status == 'preparing' %}
-            text-purple-500
-        {% elif order.status == 'served' %}
-            text-green-500
-        {% endif %}
-    ">
-        {{ order.status|title }}
-    </div>
+{% if order.status == 'pending_payment' %}
+text-red-400
+{% elif order.status == 'confirmed' %}
+text-blue-400
+{% elif order.status == 'preparing' %}
+text-purple-400
+{% elif order.status == 'served' %}
+text-green-400
+{% endif %}
+">
 
-    <p class="mt-6 text-gray-500 dark:text-gray-400">
-        {% if order.status == 'pending_payment' %}
-            Please complete your bank transfer. Waiting for confirmation.
-        {% elif order.status == 'confirmed' %}
-            Payment confirmed. Your order will be prepared shortly.
-        {% elif order.status == 'preparing' %}
-            Our kitchen is preparing your meal.
-        {% elif order.status == 'served' %}
-            Your order has been served. Enjoy!
-        {% endif %}
-    </p>
+{{ order.status|title }}
 
 </div>
+
+<p class="mt-6 text-gray-400">
+
+{% if order.status == 'pending_payment' %}
+Waiting for payment confirmation
+
+{% elif order.status == 'confirmed' %}
+Kitchen will start shortly
+
+{% elif order.status == 'preparing' %}
+Your meal is being prepared
+
+{% elif order.status == 'served' %}
+Order served. Enjoy!
+
+{% endif %}
+
+</p>
+
+</div>
+
+<script>
+
+setInterval(()=>{
+location.reload()
+},5000)
+
+</script>
 
 </body>
 </html>

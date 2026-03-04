@@ -1,136 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Menu - Table {{ table.number }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class'
-        }
-    </script>
+
+<meta charset="UTF-8">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config={darkMode:'class'}
+</script>
+
 </head>
 
-<body class="bg-gray-100 dark:bg-[#0f0f0f] transition-colors duration-500">
+<body class="bg-gray-100 dark:bg-[#0f0f0f]">
 
 <div class="max-w-6xl mx-auto p-6">
 
-    <!-- Header -->
-    <div class="flex justify-between items-center mb-10">
-        <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">
-            Table {{ table.number }}
-        </h1>
+<div class="flex justify-between items-center mb-10">
 
-        <button onclick="toggleTheme()" 
-            class="px-4 py-2 border rounded-lg text-sm dark:text-white">
-            Toggle Theme
-        </button>
-    </div>
+<h1 class="text-2xl font-semibold dark:text-white">
+Table {{ table.number }}
+</h1>
 
-    <!-- Categories -->
-    {% for category in categories %}
-        <h2 class="text-xl font-medium mt-8 mb-4 text-gray-700 dark:text-gray-300">
-            {{ category.name }}
-        </h2>
-
-        <div class="grid md:grid-cols-3 gap-6">
-        {% for item in items %}
-            {% if item.category == category %}
-            <div class="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-lg overflow-hidden">
-                <img src="{{ item.image.url }}" class="w-full h-48 object-cover">
-
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold dark:text-white">
-                        {{ item.name }}
-                    </h3>
-                    <p class="mt-2 text-gray-600 dark:text-gray-400">
-                        ₦{{ item.price }}
-                    </p>
-
-                    <button 
-                        onclick="addToCart('{{ item.id }}', '{{ item.name }}', '{{ item.price }}')" 
-                        class="mt-4 w-full bg-black dark:bg-white dark:text-black text-white py-2 rounded-lg">
-                        Add to Cart
-                    </button>
-                </div>
-            </div>
-            {% endif %}
-        {% endfor %}
-        </div>
-    {% endfor %}
+<button onclick="toggleTheme()" class="px-4 py-2 border rounded-lg dark:text-white">
+Theme
+</button>
 
 </div>
 
-<!-- Floating Cart -->
- <div onclick="openCart()" 
-     class="fixed bottom-6 right-6 bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-full shadow-xl cursor-pointer">
-    Cart (<span id="cart-count">0</span>)
+
+{% for category in categories %}
+
+<h2 class="text-xl font-semibold mt-10 mb-4 text-gray-700 dark:text-gray-300">
+{{ category.name }}
+</h2>
+
+<div class="grid md:grid-cols-3 gap-6">
+
+{% for item in items %}
+{% if item.category == category %}
+
+<div class="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-xl overflow-hidden hover:scale-[1.02] transition">
+
+<img src="{{ item.image.url }}" class="w-full h-48 object-cover">
+
+<div class="p-4">
+
+<h3 class="text-lg font-semibold dark:text-white">
+{{ item.name }}
+</h3>
+
+<p class="mt-1 text-gray-500 dark:text-gray-400">
+₦{{ item.price }}
+</p>
+
+<button onclick="addToCart('{{ item.id }}','{{ item.name }}','{{ item.price }}')"
+class="mt-4 w-full bg-black text-white dark:bg-white dark:text-black py-2 rounded-lg">
+
+Add to Cart
+
+</button>
+
 </div>
+
+</div>
+
+{% endif %}
+{% endfor %}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+<div onclick="openCart()"
+class="fixed bottom-6 right-6 bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-full shadow-xl cursor-pointer">
+
+Cart (<span id="cart-count">0</span>)
+
+</div>
+
 
 <script>
-    let cart = []
-    const tableNumber = Number("{{ table.number }}")
 
-    function toggleTheme() {
-        document.documentElement.classList.toggle('dark')
-        localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light'
-    }
+let cart=[]
+const tableNumber=Number("{{ table.number }}")
 
-    if (localStorage.theme === 'dark') {
-        document.documentElement.classList.add('dark')
-    }
+function toggleTheme(){
 
-    function addToCart(id, name, price) {
-        let existing = cart.find(item => item.id === id)
+document.documentElement.classList.toggle("dark")
 
-        if (existing) {
-            existing.quantity += 1
-        } else {
-            cart.push({id: id, name: name, price: price, quantity: 1})
-        }
+localStorage.theme=document.documentElement.classList.contains("dark")?"dark":"light"
 
-        document.getElementById("cart-count").innerText = cart.reduce((sum, item) => sum + item.quantity, 0)
-    }
+}
 
-    function openCart() {
-        if (cart.length === 0) {
-            alert("Cart is empty")
-            return
-        }
+if(localStorage.theme==="dark"){
 
-        if (confirm("Place order?")) {
-            fetch("/create-order/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": getCookie("csrftoken")
-                },
-                body: JSON.stringify({
-                    table: tableNumber,
-                    items: cart
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                window.location.href = data.redirect_url
-            })
-        }
-    }
+document.documentElement.classList.add("dark")
 
-    function getCookie(name) {
-        let cookieValue = null
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';')
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim()
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
-                    break
-                }
-            }
-        }
-        return cookieValue
-    }
+}
+
+function addToCart(id,name,price){
+
+let existing=cart.find(i=>i.id===id)
+
+if(existing){
+
+existing.quantity++
+
+}else{
+
+cart.push({id:id,name:name,price:price,quantity:1})
+
+}
+
+document.getElementById("cart-count").innerText=
+
+cart.reduce((sum,item)=>sum+item.quantity,0)
+
+}
+
+function openCart(){
+
+if(cart.length===0){
+
+alert("Cart empty")
+return
+
+}
+
+if(confirm("Place order?")){
+
+fetch("/create-order/",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"X-CSRFToken":getCookie("csrftoken")
+},
+
+body:JSON.stringify({
+
+table:tableNumber,
+items:cart
+
+})
+
+})
+
+.then(r=>r.json())
+
+.then(data=>{
+
+window.location.href=data.redirect_url
+
+})
+
+}
+
+}
+
+function getCookie(name){
+
+let cookieValue=null
+
+if(document.cookie&&document.cookie!==""){
+
+const cookies=document.cookie.split(";")
+
+for(let i=0;i<cookies.length;i++){
+
+const cookie=cookies[i].trim()
+
+if(cookie.substring(0,name.length+1)===name+"="){
+
+cookieValue=decodeURIComponent(cookie.substring(name.length+1))
+
+break
+
+}
+
+}
+
+}
+
+return cookieValue
+
+}
+
 </script>
 
 </body>
