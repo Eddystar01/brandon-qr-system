@@ -28,4 +28,6 @@ class MenuItemAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'price', 'available')
     list_filter = ('category', 'available')
     search_fields = ('name', 'description')
+
+admin.site.register(MenuItem, MenuItemAdmin)
 admin.site.register(Category)
