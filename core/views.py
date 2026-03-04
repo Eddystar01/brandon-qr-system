@@ -8,13 +8,14 @@ import json
 from .models import Table, Category, MenuItem, Order, OrderItem
 
 
-# =========================================
+# ==========================
 # CUSTOMER MENU
-# =========================================
+# ==========================
 
 def menu_view(request, table_number):
 
     table = get_object_or_404(Table, number=table_number)
+
     categories = Category.objects.all()
     items = MenuItem.objects.filter(available=True)
 
@@ -27,9 +28,9 @@ def menu_view(request, table_number):
     return render(request, "core/menu.html", context)
 
 
-# =========================================
+# ==========================
 # CREATE ORDER
-# =========================================
+# ==========================
 
 def create_order(request):
 
@@ -42,17 +43,17 @@ def create_order(request):
 
         table = get_object_or_404(Table, number=table_number)
 
-        total_price = 0
-
         order = Order.objects.create(
             table=table,
             total_price=0
         )
 
+        total_price = 0
+
         for item in items:
 
             menu_item = get_object_or_404(MenuItem, id=item["id"])
-            quantity = item["quantity"]
+            quantity = int(item["quantity"])
 
             OrderItem.objects.create(
                 order=order,
@@ -74,9 +75,9 @@ def create_order(request):
     return JsonResponse({"status": "error"})
 
 
-# =========================================
-# ORDER STATUS PAGE (CUSTOMER)
-# =========================================
+# ==========================
+# CUSTOMER ORDER STATUS
+# ==========================
 
 def order_status(request, order_id):
 
@@ -87,25 +88,25 @@ def order_status(request, order_id):
     })
 
 
-# =========================================
+# ==========================
 # KITCHEN DASHBOARD
-# =========================================
+# ==========================
 
 @login_required
 def kitchen_dashboard(request):
 
     orders = Order.objects.filter(
         status__in=["confirmed", "preparing"]
-    ).order_by("created_at")   # priority sorting (oldest first)
+    ).order_by("created_at")  # priority sorting
 
     return render(request, "core/kitchen.html", {
         "orders": orders
     })
 
 
-# =========================================
+# ==========================
 # UPDATE ORDER STATUS
-# =========================================
+# ==========================
 
 @login_required
 def update_status(request, order_id, new_status):
@@ -122,9 +123,9 @@ def update_status(request, order_id, new_status):
     return redirect("kitchen_dashboard")
 
 
-# =========================================
-# KITCHEN LIVE DATA (AJAX)
-# =========================================
+# ==========================
+# LIVE ORDER CHECK (KITCHEN)
+# ==========================
 
 def kitchen_data(request):
 
@@ -137,9 +138,9 @@ def kitchen_data(request):
     })
 
 
-# =========================================
-# SEND MESSAGE TO CUSTOMER
-# =========================================
+# ==========================
+# KITCHEN MESSAGE
+# ==========================
 
 @login_required
 def send_kitchen_message(request, order_id):
@@ -156,9 +157,9 @@ def send_kitchen_message(request, order_id):
     return redirect("kitchen_dashboard")
 
 
-# =========================================
+# ==========================
 # LOGIN
-# =========================================
+# ==========================
 
 def login_view(request):
 
@@ -176,9 +177,9 @@ def login_view(request):
     return render(request, "core/login.html")
 
 
-# =========================================
+# ==========================
 # LOGOUT
-# =========================================
+# ==========================
 
 def logout_view(request):
 

@@ -4,6 +4,7 @@
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Menu - Table {{ table.number }}</title>
 
@@ -13,110 +14,130 @@
 tailwind.config = { darkMode: 'class' }
 </script>
 
+<style>
+
+/* smooth scrolling */
+
+html{
+scroll-behavior:smooth;
+}
+
+/* hide scrollbar */
+
+::-webkit-scrollbar{
+display:none;
+}
+
+</style>
+
 </head>
+
 
 
 <body class="bg-gray-100 dark:bg-[#0f0f0f]">
 
-
-<!-- ================================= -->
-<!-- PAGE CONTAINER -->
-<!-- ================================= -->
-
-<div class="max-w-6xl mx-auto p-6">
-
-
-<!-- ================================= -->
+<!-- =============================== -->
 <!-- HEADER -->
-<!-- ================================= -->
+<!-- =============================== -->
 
-<div class="flex justify-between items-center mb-10">
+<div class="sticky top-0 bg-white dark:bg-[#0f0f0f] z-50 border-b">
 
-<h1 class="text-2xl font-semibold text-gray-800 dark:text-white">
+<div class="flex justify-between items-center p-4">
 
+<h1 class="text-xl font-semibold dark:text-white">
 Table {{ table.number }}
-
 </h1>
 
-
-<!-- THEME TOGGLE -->
-
-<button onclick="toggleTheme()"
-class="px-4 py-2 border rounded-lg text-sm dark:text-white">
-
-Toggle Theme
-
+<button onclick="toggleTheme()" class="text-sm border px-3 py-1 rounded dark:text-white">
+Theme
 </button>
 
 </div>
 
 
+<!-- =============================== -->
+<!-- CATEGORY BAR -->
+<!-- =============================== -->
 
-<!-- ================================= -->
-<!-- MENU CATEGORIES -->
-<!-- ================================= -->
+<div class="flex gap-4 overflow-x-auto px-4 pb-3">
+
+<button onclick="scrollToCategory('all')" class="category-btn">
+All
+</button>
 
 {% for category in categories %}
 
-<h2 class="text-xl font-medium mt-8 mb-4 text-gray-700 dark:text-gray-300">
-
+<button onclick="scrollToCategory('{{ category.id }}')" class="category-btn">
 {{ category.name }}
+</button>
 
+{% endfor %}
+
+</div>
+
+</div>
+
+
+
+<!-- =============================== -->
+<!-- MENU SECTION -->
+<!-- =============================== -->
+
+<div class="max-w-3xl mx-auto px-4 pb-32">
+
+{% for category in categories %}
+
+<div id="{{ category.id }}" class="category-section pt-6">
+
+<h2 class="text-lg font-semibold mb-4 dark:text-white">
+{{ category.name }}
 </h2>
-
-
-
-<!-- ================================= -->
-<!-- MENU ITEMS GRID -->
-<!-- ================================= -->
-
-<div class="grid md:grid-cols-3 gap-6">
 
 
 {% for item in items %}
 
 {% if item.category == category %}
 
-
-<!-- MENU ITEM CARD -->
-
-<div class="bg-white dark:bg-[#1a1a1a] rounded-xl shadow-lg overflow-hidden">
+<div class="flex justify-between items-center py-4 border-b">
 
 
-<img src="{{ item.image.url }}" class="w-full h-48 object-cover">
+<!-- ITEM INFO -->
 
+<div class="flex-1 pr-4">
 
-<div class="p-4">
-
-<h3 class="text-lg font-semibold dark:text-white">
-
+<h3 class="font-medium dark:text-white">
 {{ item.name }}
-
 </h3>
 
-
-<p class="mt-2 text-gray-600 dark:text-gray-400">
-
-₦{{ item.price }}
-
+<p class="text-gray-500 text-sm mt-1">
+{{ item.category.name }}
 </p>
 
+<p class="mt-2 font-semibold">
+₦{{ item.price }}
+</p>
 
-<!-- ADD TO CART BUTTON -->
+</div>
+
+
+<!-- IMAGE + ADD BUTTON -->
+
+<div class="flex flex-col items-end gap-2">
+
+<img src="{{ item.image.url }}"
+class="w-20 h-20 rounded-lg object-cover">
 
 <button
 onclick="addToCart('{{ item.id }}','{{ item.name }}','{{ item.price }}')"
-class="mt-4 w-full bg-black dark:bg-white dark:text-black text-white py-2 rounded-lg">
+class="bg-green-500 text-white px-4 py-1 rounded-lg">
 
-Add to Cart
+Add +
 
 </button>
 
-
 </div>
 
 </div>
-
 
 {% endif %}
 
@@ -126,17 +147,16 @@ Add to Cart
 
 {% endfor %}
 
-
 </div>
 
 
 
-<!-- ================================= -->
-<!-- FLOATING CART BUTTON -->
-<!-- ================================= -->
+<!-- =============================== -->
+<!-- CART BUTTON -->
+<!-- =============================== -->
 
 <div onclick="openCart()"
-class="fixed bottom-6 right-6 bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-full shadow-xl cursor-pointer">
+class="fixed bottom-6 right-6 bg-black text-white px-6 py-3 rounded-full shadow-xl cursor-pointer">
 
 Cart (<span id="cart-count">0</span>)
 
@@ -144,80 +164,204 @@ Cart (<span id="cart-count">0</span>)
 
 
 
-<!-- ================================= -->
+<!-- =============================== -->
+<!-- CART DRAWER -->
+<!-- =============================== -->
+
+<div id="cart-drawer"
+class="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1a1a1a] shadow-2xl p-6 hidden">
+
+<h2 class="text-lg font-semibold mb-4 dark:text-white">
+Your Order
+</h2>
+
+<div id="cart-items" class="space-y-4"></div>
+
+<button onclick="placeOrder()"
+class="w-full bg-black text-white py-3 mt-6 rounded-lg">
+
+Place Order
+
+</button>
+
+</div>
+
+
+
+<!-- =============================== -->
 <!-- JAVASCRIPT -->
-<!-- ================================= -->
+<!-- =============================== -->
 
 <script>
 
-let cart = []
+let cart=[]
 
-const tableNumber = Number("{{ table.number }}")
+const tableNumber=Number("{{ table.number }}")
 
+
+/* ============================= */
+/* THEME TOGGLE */
+/* ============================= */
 
 function toggleTheme(){
 
 document.documentElement.classList.toggle('dark')
 
-localStorage.theme =
-document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+localStorage.theme=
+document.documentElement.classList.contains('dark')?'dark':'light'
 
 }
 
-
-if(localStorage.theme === 'dark'){
-
+if(localStorage.theme==='dark'){
 document.documentElement.classList.add('dark')
+}
+
+
+/* ============================= */
+/* SCROLL TO CATEGORY */
+/* ============================= */
+
+function scrollToCategory(id){
+
+if(id==="all"){
+window.scrollTo({top:0,behavior:"smooth"})
+return
+}
+
+const el=document.getElementById(id)
+
+if(el){
+el.scrollIntoView({behavior:"smooth"})
+}
 
 }
 
+
+
+/* ============================= */
+/* ADD TO CART */
+/* ============================= */
 
 function addToCart(id,name,price){
 
-let existing = cart.find(item => item.id === id)
+let existing=cart.find(i=>i.id===id)
 
 if(existing){
-
 existing.quantity++
-
+}else{
+cart.push({id,name,price,quantity:1})
 }
 
-else{
-
-cart.push({id:id,name:name,price:price,quantity:1})
-
-}
-
-
-document.getElementById("cart-count").innerText =
-cart.reduce((sum,item)=>sum + item.quantity,0)
+updateCart()
 
 }
 
 
+
+/* ============================= */
+/* UPDATE CART UI */
+/* ============================= */
+
+function updateCart(){
+
+document.getElementById("cart-count").innerText=
+cart.reduce((sum,item)=>sum+item.quantity,0)
+
+const container=document.getElementById("cart-items")
+
+container.innerHTML=""
+
+cart.forEach(item=>{
+
+container.innerHTML+=`
+
+<div class="flex justify-between items-center">
+
+<div>
+
+<p class="font-medium">${item.name}</p>
+
+<p>₦${item.price}</p>
+
+</div>
+
+<div class="flex gap-2 items-center">
+
+<button onclick="changeQty('${item.id}',-1)"
+class="px-2 bg-gray-300 rounded">−</button>
+
+<span>${item.quantity}</span>
+
+<button onclick="changeQty('${item.id}',1)"
+class="px-2 bg-gray-300 rounded">+</button>
+
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+
+
+/* ============================= */
+/* CHANGE QUANTITY */
+/* ============================= */
+
+function changeQty(id,delta){
+
+let item=cart.find(i=>i.id===id)
+
+if(!item)return
+
+item.quantity+=delta
+
+if(item.quantity<=0){
+cart=cart.filter(i=>i.id!==id)
+}
+
+updateCart()
+
+}
+
+
+
+/* ============================= */
+/* OPEN CART */
+/* ============================= */
 
 function openCart(){
 
-if(cart.length === 0){
+document.getElementById("cart-drawer").classList.toggle("hidden")
 
-alert("Cart is empty")
+}
+
+
+
+/* ============================= */
+/* PLACE ORDER */
+/* ============================= */
+
+function placeOrder(){
+
+if(cart.length===0){
+
+alert("Cart empty")
 
 return
 
 }
-
-
-if(confirm("Place order?")){
 
 fetch("/create-order/",{
 
 method:"POST",
 
 headers:{
-
 "Content-Type":"application/json",
 "X-CSRFToken":getCookie("csrftoken")
-
 },
 
 body:JSON.stringify({
@@ -229,34 +373,37 @@ items:cart
 
 })
 
-.then(response => response.json())
+.then(res=>res.json())
 
-.then(data => {
+.then(data=>{
 
-window.location.href = data.redirect_url
+window.location.href=data.redirect_url
 
 })
 
 }
 
-}
 
+
+/* ============================= */
+/* CSRF TOKEN */
+/* ============================= */
 
 function getCookie(name){
 
-let cookieValue = null
+let cookieValue=null
 
-if(document.cookie && document.cookie !== ''){
+if(document.cookie && document.cookie!==''){
 
-const cookies = document.cookie.split(';')
+const cookies=document.cookie.split(';')
 
 for(let i=0;i<cookies.length;i++){
 
-const cookie = cookies[i].trim()
+const cookie=cookies[i].trim()
 
-if(cookie.substring(0,name.length+1) === (name+'=')){
+if(cookie.substring(0,name.length+1)===(name+'=')){
 
-cookieValue = decodeURIComponent(cookie.substring(name.length+1))
+cookieValue=decodeURIComponent(cookie.substring(name.length+1))
 
 break
 
