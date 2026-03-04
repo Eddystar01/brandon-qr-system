@@ -17,7 +17,7 @@ class Table(models.Model):
 
             buffer = BytesIO()
             qr.save(buffer, format="PNG")
-
+            buffer.seek(0)
             filename = f"table_{self.number}.png"
 
             self.qr_code.save(filename, File(buffer), save=False)
