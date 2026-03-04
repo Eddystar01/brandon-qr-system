@@ -11,7 +11,7 @@ class Table(models.Model):
     def save(self, *args, **kwargs):
 
         if not self.qr_code:
-            url = f"https://brandonhotelandapartments.com/table/{self.number}/"
+            url = f"https://qr.brandonhotelandapartments.com/table/{self.number}/"
 
             qr = qrcode.make(url)
 
