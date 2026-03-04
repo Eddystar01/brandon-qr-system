@@ -151,13 +151,11 @@ X_FRAME_OPTIONS = 'DENY'
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
-import cloudinary
-
-cloudinary.config(
-    cloud_name = "dn8s0xipn",
-    api_key = "432922263544777",
-    api_secret = "_Z0yQ01SpStVSDzVJiXsFpDST4k"
-)
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": "dn8s0xipn",
+    "API_KEY": "432922263544777",
+    "API_SECRET": "_Z0yQ01SpStVSDzVJiXsFpDST4k",
+}
 
 STORAGES = {
     "default": {
