@@ -1,8 +1,19 @@
-from django.shortcuts import render, get_object_or_404
-from .models import Table, Category, MenuItem
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+
+import json
+
+from .models import Table, Category, MenuItem, Order, OrderItem
+
+
+# =========================================
+# CUSTOMER MENU
+# =========================================
 
 def menu_view(request, table_number):
+
     table = get_object_or_404(Table, number=table_number)
     categories = Category.objects.all()
     items = MenuItem.objects.filter(available=True)
@@ -15,25 +26,32 @@ def menu_view(request, table_number):
 
     return render(request, "core/menu.html", context)
 
-from django.http import JsonResponse
-import json
-from .models import Order, OrderItem, MenuItem
 
+# =========================================
+# CREATE ORDER
+# =========================================
 
 def create_order(request):
+
     if request.method == "POST":
+
         data = json.loads(request.body)
 
         table_number = data.get("table")
         items = data.get("items")
 
-        table = Table.objects.get(number=table_number)
+        table = get_object_or_404(Table, number=table_number)
 
         total_price = 0
-        order = Order.objects.create(table=table, total_price=0)
+
+        order = Order.objects.create(
+            table=table,
+            total_price=0
+        )
 
         for item in items:
-            menu_item = MenuItem.objects.get(id=item["id"])
+
+            menu_item = get_object_or_404(MenuItem, id=item["id"])
             quantity = item["quantity"]
 
             OrderItem.objects.create(
@@ -55,43 +73,97 @@ def create_order(request):
 
     return JsonResponse({"status": "error"})
 
+
+# =========================================
+# ORDER STATUS PAGE (CUSTOMER)
+# =========================================
+
 def order_status(request, order_id):
+
     order = get_object_or_404(Order, id=order_id)
-    return render(request, "core/order_status.html", {"order": order})
+
+    return render(request, "core/order_status.html", {
+        "order": order
+    })
+
+
+# =========================================
+# KITCHEN DASHBOARD
+# =========================================
 
 @login_required
 def kitchen_dashboard(request):
-    orders = Order.objects.filter(
-        status__in=['confirmed', 'preparing']
-    ).order_by('-created_at')
-    return render(request, "core/kitchen.html", {"orders": orders})
 
-from django.shortcuts import redirect
+    orders = Order.objects.filter(
+        status__in=["confirmed", "preparing"]
+    ).order_by("created_at")   # priority sorting (oldest first)
+
+    return render(request, "core/kitchen.html", {
+        "orders": orders
+    })
+
+
+# =========================================
+# UPDATE ORDER STATUS
+# =========================================
 
 @login_required
 def update_status(request, order_id, new_status):
-    order = Order.objects.get(id=order_id)
-    order.status = new_status
-    order.save()
-    return redirect('kitchen_dashboard')
 
-from django.http import JsonResponse
+    order = get_object_or_404(Order, id=order_id)
+
+    order.status = new_status
+
+    if new_status == "cancelled":
+        order.kitchen_message = "Kitchen cannot prepare this order. Please reorder."
+
+    order.save()
+
+    return redirect("kitchen_dashboard")
+
+
+# =========================================
+# KITCHEN LIVE DATA (AJAX)
+# =========================================
 
 def kitchen_data(request):
+
     orders = Order.objects.filter(
-        status__in=['confirmed', 'preparing']
-    ).values('id')
+        status__in=["confirmed", "preparing"]
+    ).values("id")
 
     return JsonResponse({
         "orders": list(orders)
     })
 
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render, redirect
 
+# =========================================
+# SEND MESSAGE TO CUSTOMER
+# =========================================
+
+@login_required
+def send_kitchen_message(request, order_id):
+
+    if request.method == "POST":
+
+        order = get_object_or_404(Order, id=order_id)
+
+        message = request.POST.get("message")
+
+        order.kitchen_message = message
+        order.save()
+
+    return redirect("kitchen_dashboard")
+
+
+# =========================================
+# LOGIN
+# =========================================
 
 def login_view(request):
+
     if request.method == "POST":
+
         username = request.POST.get("username")
         password = request.POST.get("password")
 
@@ -104,6 +176,12 @@ def login_view(request):
     return render(request, "core/login.html")
 
 
+# =========================================
+# LOGOUT
+# =========================================
+
 def logout_view(request):
+
     logout(request)
+
     return redirect("login")

@@ -1,28 +1,92 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+
+        @keyframes pulse{
+            0%{transform:scale(1)}
+            50%{transform:scale(1.02)}
+            100%{transform:scale(1)}
+        }
+
+    </style>
 </head>
 
-<body class="bg-[#0f0f0f] text-white p-8">
+<body class="bg-black text-white p-8">
+
+<!-- ================================= -->
+<!-- PAGE TITLE -->
+<!-- ================================= -->
 
 <h1 class="text-3xl mb-8 font-bold">Kitchen Dashboard</h1>
+
+<!-- ================================= -->
+<!-- RUSH MODE BANNER -->
+<!-- ================================= -->
+
+<div id="rush-banner"
+class="hidden bg-red-700 text-center p-4 mb-6 text-xl font-bold rounded">
+
+🚨 RUSH MODE — MANY ORDERS IN QUEUE
+
+</div>
+
+<!-- ================================= -->
+<!-- ORDER COUNT -->
+<!-- ================================= -->
+
+<p class="mb-6 text-gray-400">
+
+Active Orders:
+<span id="order-count">{{ orders|length }}</span>
+
+</p>
+
+<!-- ================================= -->
+<!-- ORDERS GRID -->
+<!-- ================================= -->
 
 <div class="grid md:grid-cols-3 gap-6">
 
 {% for order in orders %}
-<div id="order-{{ order.id }}"
-class="bg-[#1a1a1a] p-6 rounded-xl shadow-lg border border-gray-800">
 
-<h2 class="text-xl font-semibold mb-1">
+<!-- ================================= -->
+<!-- ORDER CARD -->
+<!-- ================================= -->
+
+<div id="order-{{ order.id }}" class="order-card bg-[#1a1a1a] p-6 rounded-xl border border-gray-800">
+
+<!-- ORDER NUMBER -->
+
+<h2 class="text-xl font-semibold mb-1 flex justify-between">
+
+<span>
 Order #{{ order.id }}
+</span>
+
+<!-- PRIORITY BADGE -->
+<span class="priority text-sm px-2 py-1 rounded bg-gray-700">
+Priority
+</span>
+
 </h2>
 
-<p class="text-gray-400 mb-1">Table {{ order.table.number }}</p>
+<!-- TABLE NUMBER -->
+
+<p class="text-gray-400 mb-1">
+Table {{ order.table.number }}
+</p>
+
+<!-- ORDER WAITING TIMER -->
 
 <p class="text-sm text-gray-500 mb-3">
-<span class="order-time" data-time="{{ order.created_at }}"></span>
+Waiting: <span class="timer" data-time="{{ order.created_at }}"></span>
 </p>
+
+<!-- ORDER STATUS -->
 
 <p class="mb-4 font-semibold
 {% if order.status == 'confirmed' %} text-blue-400
@@ -31,62 +95,155 @@ Order #{{ order.id }}
 {{ order.status|title }}
 </p>
 
+
+<!-- ================================= -->
+<!-- ORDER ITEMS -->
+<!-- ================================= -->
+
 <ul class="mb-4 text-gray-300">
+
 {% for item in order.orderitem_set.all %}
-<li>{{ item.item.name }} ×{{ item.quantity }}</li>
+
+<li>
+{{ item.item.name }} ×{{ item.quantity }}
+</li>
+
 {% endfor %}
+
 </ul>
 
-<div class="flex gap-3">
+
+<!-- ================================= -->
+<!-- ORDER ACTION BUTTONS -->
+<!-- ================================= -->
+
+<div class="flex gap-3 mb-4">
 
 {% if order.status == 'confirmed' %}
+
 <a href="/update-status/{{ order.id }}/preparing/"
 class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded">
+
 Start Preparing
+
 </a>
 
 {% elif order.status == 'preparing' %}
+
 <a href="/update-status/{{ order.id }}/served/"
 class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
+
 Mark Served
+
 </a>
+
 {% endif %}
 
-</div>
+
+<!-- CANCEL ORDER BUTTON -->
+
+<a href="/update-status/{{ order.id }}/cancelled/"
+class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">
+
+Cancel Order
+
+</a>
 
 </div>
+
+
+<!-- ================================= -->
+<!-- SEND MESSAGE TO TABLE -->
+<!-- ================================= -->
+
+<form action="/kitchen-message/{{ order.id }}/" method="POST">
+
+{% csrf_token %}
+
+<input
+type="text"
+name="message"
+placeholder="Message to table..."
+class="w-full p-2 rounded bg-black text-white border border-gray-700 mb-2">
+
+<button
+class="bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded">
+
+Send Message
+
+</button>
+
+</form>
+
+
+</div>
+
 {% endfor %}
 
 </div>
+
+
+
+<!-- ================================= -->
+<!-- SOUND NOTIFICATION -->
+<!-- ================================= -->
 
 <audio id="notification-sound">
 <source src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg">
 </audio>
 
+
+
+<!-- ================================= -->
+<!-- JAVASCRIPT SECTION -->
+<!-- ================================= -->
+
 <script>
+
+
+/* ================================= */
+/* TRACK HIGHEST ORDER ID */
+/* ================================= */
 
 let highestOrderId = 0
 
-document.querySelectorAll("[id^='order-']").forEach(el=>{
+document.querySelectorAll("[id^='order-']").forEach(el => {
+
 const id = parseInt(el.id.replace("order-",""))
-if(id>highestOrderId) highestOrderId=id
+
+if(id > highestOrderId){
+
+highestOrderId = id
+
+}
+
 })
+
+
+/* ================================= */
+/* CHECK NEW ORDERS */
+/* ================================= */
 
 function checkNewOrders(){
 
 fetch("/kitchen-data/")
-.then(res=>res.json())
-.then(data=>{
 
-data.orders.forEach(order=>{
-if(order.id>highestOrderId){
+.then(res => res.json())
 
-highestOrderId=order.id
+.then(data => {
+
+data.orders.forEach(order => {
+
+if(order.id > highestOrderId){
+
+highestOrderId = order.id
 
 document.getElementById("notification-sound").play()
 
-setTimeout(()=>{
+setTimeout(() => {
+
 location.reload()
+
 },800)
 
 }
@@ -97,29 +254,127 @@ location.reload()
 
 }
 
+
 setInterval(checkNewOrders,5000)
 
-/* order timer */
+
+
+/* ================================= */
+/* ORDER TIMER + URGENCY */
+/* ================================= */
 
 function updateTimers(){
 
-document.querySelectorAll(".order-time").forEach(el=>{
+document.querySelectorAll(".timer").forEach(el => {
 
 const created = new Date(el.dataset.time)
+
 const now = new Date()
 
-const diff = Math.floor((now-created)/60000)
+const diff = Math.floor((now - created)/60000)
 
-el.innerText = diff+" min ago"
+el.innerText = diff + " min"
+
+
+const card = el.closest(".order-card")
+
+
+if(diff > 15){
+
+card.style.border = "2px solid red"
+card.style.animation = "pulse 1s infinite"
+
+}
+
+else if(diff > 8){
+
+card.style.border = "2px solid orange"
+
+}
 
 })
 
 }
 
+
 setInterval(updateTimers,60000)
+
 updateTimers()
+
+/* ================================= */
+/* PRIORITY LABELS */
+/* ================================= */
+
+function updatePriority(){
+
+document.querySelectorAll(".timer").forEach(el => {
+
+const created = new Date(el.dataset.time)
+const now = new Date()
+
+const diff = Math.floor((now - created)/60000)
+
+const badge = el.closest(".order-card").querySelector(".priority")
+
+if(diff > 15){
+
+badge.innerText = "URGENT"
+badge.style.background = "red"
+
+}
+
+else if(diff > 8){
+
+badge.innerText = "HIGH"
+badge.style.background = "orange"
+
+}
+
+else{
+
+badge.innerText = "NORMAL"
+badge.style.background = "gray"
+
+}
+
+})
+
+}
+
+setInterval(updatePriority,60000)
+updatePriority()
+
+/* ================================= */
+/* RUSH MODE DETECTION */
+/* ================================= */
+
+function checkRushMode(){
+
+const orderCount = document.querySelectorAll(".order-card").length
+
+const banner = document.getElementById("rush-banner")
+
+if(orderCount >= 6){
+
+banner.classList.remove("hidden")
+
+document.body.style.background = "#200000"
+
+}
+else{
+
+banner.classList.add("hidden")
+
+document.body.style.background = "black"
+
+}
+
+}
+
+checkRushMode()
 
 </script>
 
 </body>
+
 </html>

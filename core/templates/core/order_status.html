@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
+<meta charset="UTF-8">
 
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -8,15 +11,30 @@
 
 <body class="bg-[#0f0f0f] min-h-screen flex items-center justify-center">
 
+
+<!-- ================================= -->
+<!-- ORDER STATUS CARD -->
+<!-- ================================= -->
+
 <div class="bg-[#1a1a1a] p-10 rounded-xl shadow-xl text-center w-[420px]">
 
 <h1 class="text-2xl font-semibold text-white mb-6">
+
 Order #{{ order.id }}
+
 </h1>
 
+
+<!-- TABLE NUMBER -->
+
 <p class="text-gray-400 mb-4">
+
 Table {{ order.table.number }}
+
 </p>
+
+
+<!-- ORDER STATUS COLOR -->
 
 <div class="text-xl font-semibold
 
@@ -35,6 +53,9 @@ text-green-400
 
 </div>
 
+
+<!-- STATUS MESSAGE -->
+
 <p class="mt-6 text-gray-400">
 
 {% if order.status == 'pending_payment' %}
@@ -49,19 +70,58 @@ Your meal is being prepared
 {% elif order.status == 'served' %}
 Order served. Enjoy!
 
+{% elif order.status == 'cancelled' %}
+Order cancelled
+
 {% endif %}
+
+</p>
+
+
+
+<!-- ================================= -->
+<!-- KITCHEN MESSAGE DISPLAY -->
+<!-- ================================= -->
+
+{% if order.kitchen_message %}
+
+<div class="mt-6 bg-yellow-900 p-4 rounded">
+
+<p class="font-semibold">
+
+Kitchen message
+
+</p>
+
+<p class="mt-2">
+
+{{ order.kitchen_message }}
 
 </p>
 
 </div>
 
+{% endif %}
+
+
+</div>
+
+
+<!-- ================================= -->
+<!-- AUTO REFRESH SCRIPT -->
+<!-- ================================= -->
+
 <script>
 
 setInterval(()=>{
+
 location.reload()
+
 },5000)
 
 </script>
 
+
 </body>
+
 </html>

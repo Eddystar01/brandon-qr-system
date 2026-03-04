@@ -52,6 +52,7 @@ class Order(models.Model):
         ('confirmed', 'Confirmed'),
         ('preparing', 'Preparing'),
         ('served', 'Served'),
+        ('cancelled', 'Cancelled'),
     ]
 
     table = models.ForeignKey(Table, on_delete=models.CASCADE)
@@ -60,7 +61,7 @@ class Order(models.Model):
     payment_proof = models.ImageField(upload_to='payments/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     payment_confirmed = models.BooleanField(default=False)
-
+    kitchen_message = models.TextField(blank=True, null=True)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

@@ -10,4 +10,5 @@ urlpatterns = [
     path('kitchen-data/', views.kitchen_data, name='kitchen_data'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path("kitchen-message/<int:order_id>/", views.send_kitchen_message, name="kitchen_message"),
 ]
