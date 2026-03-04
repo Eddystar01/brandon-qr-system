@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Table, Category, MenuItem, Order, OrderItem
+from django.utils.safestring import mark_safe
 
 
 class OrderItemInline(admin.TabularInline):
@@ -14,6 +15,15 @@ class OrderAdmin(admin.ModelAdmin):
     inlines = [OrderItemInline]
 
 
-admin.site.register(Table)
+@admin.register(Table)
+class TableAdmin(admin.ModelAdmin):
+    list_display = ('number', 'qr_preview')
+
+    def qr_preview(self, obj):
+        if obj.qr_code:
+            return mark_safe(f'<img src="{obj.qr_code.url}" width="80"/>')
+        return "No QR"
+
+
 admin.site.register(Category)
 admin.site.register(MenuItem)

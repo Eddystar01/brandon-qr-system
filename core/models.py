@@ -1,8 +1,28 @@
+import qrcode
+from io import BytesIO
+from django.core.files import File
 from django.db import models
 
 
 class Table(models.Model):
     number = models.IntegerField(unique=True)
+    qr_code = models.ImageField(upload_to='qr_codes/', blank=True)
+
+    def save(self, *args, **kwargs):
+
+        if not self.qr_code:
+            url = f"https://brandonhotelandapartments.com/table/{self.number}/"
+
+            qr = qrcode.make(url)
+
+            buffer = BytesIO()
+            qr.save(buffer, format="PNG")
+
+            filename = f"table_{self.number}.png"
+
+            self.qr_code.save(filename, File(buffer), save=False)
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Table {self.number}"
