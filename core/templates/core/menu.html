@@ -4,11 +4,25 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Menu - Table {{ table.number }}</title>
+<title>Menu | Brandon Hotel & Apartments</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+theme:{
+extend:{
+colors:{
+navy:"#0f1c2e",
+gold:"#d4af37",
+ash:"#f5f5f5"
+}
+}
+}
+}
+</script>
 
 <style>
 
@@ -20,38 +34,66 @@ scroll-behavior:smooth;
 display:none;
 }
 
+/* FIX category scroll landing */
+.category-section{
+scroll-margin-top:120px;
+}
+
+.active-category{
+background:#0f1c2e;
+color:white;
+}
+
 </style>
 
 </head>
 
 
-<body class="bg-gray-50">
+<body class="bg-ash">
 
-<!-- HEADER -->
+<!-- ========================= -->
+<!-- HOTEL HEADER -->
+<!-- ========================= -->
 
-<div class="sticky top-0 bg-white z-50 border-b">
+<div class="bg-navy text-white text-center py-6">
 
-<div class="flex justify-between items-center px-4 py-4">
+<img src="/static/logo/brandon-logo.png"
+class="w-20 mx-auto mb-2">
 
 <h1 class="text-xl font-semibold">
-Table {{ table.number }}
+Brandon Hotel & Apartments
 </h1>
+
+<p class="text-sm text-gray-300">
+Table {{ table.number }} Menu
+</p>
 
 </div>
 
 
-<!-- CATEGORY TABS -->
 
-<div class="flex gap-3 overflow-x-auto px-4 pb-3">
+<!-- ========================= -->
+<!-- CATEGORY BAR -->
+<!-- ========================= -->
 
-<button onclick="scrollToCategory('all')" class="px-4 py-2 bg-black text-white rounded-full text-sm">
+<div class="sticky top-0 bg-white border-b z-50">
+
+<div id="category-bar"
+class="flex gap-3 overflow-x-auto px-4 py-3">
+
+<button onclick="scrollToCategory('all')"
+class="category-btn px-4 py-2 bg-navy text-white rounded-full text-sm">
+
 All
+
 </button>
 
 {% for category in categories %}
 
-<button onclick="scrollToCategory('{{ category.id }}')"
-class="px-4 py-2 bg-gray-200 rounded-full text-sm">
+<button
+data-category="{{ category.id }}"
+onclick="scrollToCategory('{{ category.id }}')"
+class="category-btn px-4 py-2 bg-gray-200 rounded-full text-sm">
 
 {{ category.name }}
 
@@ -65,16 +107,20 @@ class="px-4 py-2 bg-gray-200 rounded-full text-sm">
 
 
 
-<!-- MENU ITEMS -->
+<!-- ========================= -->
+<!-- MENU -->
+<!-- ========================= -->
 
-<div class="max-w-3xl mx-auto px-4 pb-32">
+<div class="max-w-3xl mx-auto px-4 pb-20">
 
 {% for category in categories %}
 
-<div id="{{ category.id }}" class="pt-8">
+<div id="{{ category.id }}" class="category-section pt-10">
 
-<h2 class="text-lg font-semibold mb-4">
+<h2 class="text-xl font-semibold text-navy mb-6">
+
 {{ category.name }}
+
 </h2>
 
 
@@ -82,37 +128,40 @@ class="px-4 py-2 bg-gray-200 rounded-full text-sm">
 
 {% if item.category == category %}
 
-<div class="flex gap-4 items-center py-4 border-b">
+<div class="flex gap-4 items-center py-5 border-b">
 
 <img src="{{ item.image.url }}"
-class="w-24 h-24 rounded-xl object-cover">
+class="w-28 h-28 rounded-xl object-cover">
 
 
 <div class="flex-1">
+
+<div class="flex items-center gap-2">
 
 <h3 class="font-semibold text-lg">
 {{ item.name }}
 </h3>
 
-<p class="text-gray-500 text-sm mt-1">
-Delicious freshly prepared meal
-</p>
+<!-- BEST SELLER BADGE -->
+<span class="text-xs bg-gold text-black px-2 py-1 rounded">
 
-<p class="mt-2 font-bold text-green-600">
-₦{{ item.price }}
-</p>
+Popular
+
+</span>
 
 </div>
 
 
-<div>
+<p class="text-gray-500 text-sm mt-1">
+Freshly prepared meal
+</p>
 
-<button onclick="addToCart('{{ item.id }}','{{ item.name }}','{{ item.price }}')"
-class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm">
 
-Add +
+<p class="mt-3 font-bold text-gold text-lg">
 
-</button>
+₦{{ item.price }}
+
+</p>
 
 </div>
 
@@ -130,62 +179,7 @@ Add +
 
 
 
-<!-- CART BAR -->
-
-<div id="cart-bar"
-class="hidden fixed bottom-0 left-0 right-0 bg-black text-white p-4 flex justify-between items-center">
-
-<div>
-
-<span id="cart-count">0</span> items
-
-</div>
-
-<button onclick="openCart()"
-class="bg-green-500 px-6 py-2 rounded-lg">
-
-View Cart
-
-</button>
-
-</div>
-
-
-
-<!-- CART DRAWER -->
-
-<!-- CART DRAWER -->
-<div id="cart-drawer"
-class="fixed bottom-0 left-0 right-0 bg-white shadow-2xl p-6 hidden">
-
-<div class="flex justify-between items-center mb-4">
-
-<h2 class="text-lg font-semibold">
-Your Order
-</h2>
-
-<button onclick="closeCart()" class="text-gray-500 text-sm">
-Close
-</button>
-
-</div>
-
-<div id="cart-items" class="space-y-4"></div>
-
-<button onclick="placeOrder()"
-class="w-full bg-black text-white py-3 mt-6 rounded-lg">
-
-Place Order
-
-</button>
-
-</div>
-
 <script>
-
-let cart=[]
-const tableNumber=Number("{{ table.number }}")
-
 
 function scrollToCategory(id){
 
@@ -197,158 +191,56 @@ return
 const el=document.getElementById(id)
 
 if(el){
-el.scrollIntoView({behavior:"smooth"})
-}
 
-}
-
-
-
-function addToCart(id,name,price){
-
-let existing=cart.find(i=>i.id===id)
-
-if(existing){
-existing.quantity++
-}else{
-cart.push({id,name,price,quantity:1})
-}
-
-updateCart()
-
-}
-
-
-
-function updateCart(){
-
-const count=cart.reduce((sum,item)=>sum+item.quantity,0)
-
-document.getElementById("cart-count").innerText=count
-
-document.getElementById("cart-bar").classList.remove("hidden")
-
-const container=document.getElementById("cart-items")
-
-container.innerHTML=""
-
-cart.forEach(item=>{
-
-container.innerHTML+=`
-
-<div class="flex justify-between items-center">
-
-<div>
-
-<p class="font-medium">${item.name}</p>
-<p>₦${item.price}</p>
-
-</div>
-
-<div class="flex items-center gap-2">
-
-<button onclick="changeQty('${item.id}',-1)"
-class="px-2 bg-gray-300 rounded">-</button>
-
-<span>${item.quantity}</span>
-
-<button onclick="changeQty('${item.id}',1)"
-class="px-2 bg-gray-300 rounded">+</button>
-
-</div>
-
-</div>
-
-`
-
+el.scrollIntoView({
+behavior:"smooth",
+block:"start"
 })
 
 }
 
-
-
-function changeQty(id,delta){
-
-let item=cart.find(i=>i.id===id)
-
-if(!item)return
-
-item.quantity+=delta
-
-if(item.quantity<=0){
-cart=cart.filter(i=>i.id!==id)
 }
 
-updateCart()
+
+
+/* ============================ */
+/* AUTO CATEGORY HIGHLIGHT */
+/* ============================ */
+
+const sections=document.querySelectorAll(".category-section")
+
+const buttons=document.querySelectorAll(".category-btn")
+
+window.addEventListener("scroll",()=>{
+
+let current=""
+
+sections.forEach(section=>{
+
+const sectionTop=section.offsetTop-150
+
+if(scrollY>=sectionTop){
+
+current=section.getAttribute("id")
 
 }
 
-function openCart(){
-document.getElementById("cart-drawer").classList.remove("hidden")
+})
+
+
+buttons.forEach(btn=>{
+
+btn.classList.remove("active-category")
+
+if(btn.dataset.category===current){
+
+btn.classList.add("active-category")
+
 }
-
-function placeOrder(){
-
-fetch("/create-order/",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json",
-"X-CSRFToken":getCookie("csrftoken")
-},
-
-body:JSON.stringify({
-
-table:tableNumber,
-items:cart
 
 })
 
 })
-
-.then(res=>res.json())
-
-.then(data=>{
-closeCart()
-window.location.href=data.redirect_url
-
-})
-
-}
-
-
-
-function getCookie(name){
-
-let cookieValue=null
-
-if(document.cookie && document.cookie!==''){
-
-const cookies=document.cookie.split(';')
-
-for(let i=0;i<cookies.length;i++){
-
-const cookie=cookies[i].trim()
-
-if(cookie.substring(0,name.length+1)===(name+'=')){
-
-cookieValue=decodeURIComponent(cookie.substring(name.length+1))
-break
-
-}
-
-}
-
-}
-
-return cookieValue
-
-}
-
-function closeCart(){
-document.getElementById("cart-drawer").classList.add("hidden")
-}
 
 </script>
 
