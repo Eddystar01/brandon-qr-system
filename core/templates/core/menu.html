@@ -4,25 +4,17 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Menu - Table {{ table.number }}</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
-<script>
-tailwind.config = { darkMode: 'class' }
-</script>
-
 <style>
-
-/* smooth scrolling */
 
 html{
 scroll-behavior:smooth;
 }
-
-/* hide scrollbar */
 
 ::-webkit-scrollbar{
 display:none;
@@ -33,42 +25,36 @@ display:none;
 </head>
 
 
+<body class="bg-gray-50">
 
-<body class="bg-gray-100 dark:bg-[#0f0f0f]">
-
-<!-- =============================== -->
 <!-- HEADER -->
-<!-- =============================== -->
 
-<div class="sticky top-0 bg-white dark:bg-[#0f0f0f] z-50 border-b">
+<div class="sticky top-0 bg-white z-50 border-b">
 
-<div class="flex justify-between items-center p-4">
+<div class="flex justify-between items-center px-4 py-4">
 
-<h1 class="text-xl font-semibold dark:text-white">
+<h1 class="text-xl font-semibold">
 Table {{ table.number }}
 </h1>
-
-<button onclick="toggleTheme()" class="text-sm border px-3 py-1 rounded dark:text-white">
-Theme
-</button>
 
 </div>
 
 
-<!-- =============================== -->
-<!-- CATEGORY BAR -->
-<!-- =============================== -->
+<!-- CATEGORY TABS -->
 
-<div class="flex gap-4 overflow-x-auto px-4 pb-3">
+<div class="flex gap-3 overflow-x-auto px-4 pb-3">
 
-<button onclick="scrollToCategory('all')" class="category-btn">
+<button onclick="scrollToCategory('all')" class="px-4 py-2 bg-black text-white rounded-full text-sm">
 All
 </button>
 
 {% for category in categories %}
 
-<button onclick="scrollToCategory('{{ category.id }}')" class="category-btn">
+<button onclick="scrollToCategory('{{ category.id }}')"
+class="px-4 py-2 bg-gray-200 rounded-full text-sm">
+
 {{ category.name }}
+
 </button>
 
 {% endfor %}
@@ -79,17 +65,15 @@ All
 
 
 
-<!-- =============================== -->
-<!-- MENU SECTION -->
-<!-- =============================== -->
+<!-- MENU ITEMS -->
 
 <div class="max-w-3xl mx-auto px-4 pb-32">
 
 {% for category in categories %}
 
-<div id="{{ category.id }}" class="category-section pt-6">
+<div id="{{ category.id }}" class="pt-8">
 
-<h2 class="text-lg font-semibold mb-4 dark:text-white">
+<h2 class="text-lg font-semibold mb-4">
 {{ category.name }}
 </h2>
 
@@ -98,38 +82,33 @@ All
 
 {% if item.category == category %}
 
-<div class="flex justify-between items-center py-4 border-b">
+<div class="flex gap-4 items-center py-4 border-b">
+
+<img src="{{ item.image.url }}"
+class="w-24 h-24 rounded-xl object-cover">
 
 
-<!-- ITEM INFO -->
+<div class="flex-1">
 
-<div class="flex-1 pr-4">
-
-<h3 class="font-medium dark:text-white">
+<h3 class="font-semibold text-lg">
 {{ item.name }}
 </h3>
 
 <p class="text-gray-500 text-sm mt-1">
-{{ item.category.name }}
+Delicious freshly prepared meal
 </p>
 
-<p class="mt-2 font-semibold">
+<p class="mt-2 font-bold text-green-600">
 ₦{{ item.price }}
 </p>
 
 </div>
 
 
-<!-- IMAGE + ADD BUTTON -->
+<div>
 
-<div class="flex flex-col items-end gap-2">
-
-<img src="{{ item.image.url }}"
-class="w-20 h-20 rounded-lg object-cover">
-
-<button
-onclick="addToCart('{{ item.id }}','{{ item.name }}','{{ item.price }}')"
-class="bg-green-500 text-white px-4 py-1 rounded-lg">
+<button onclick="addToCart('{{ item.id }}','{{ item.name }}','{{ item.price }}')"
+class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm">
 
 Add +
 
@@ -151,27 +130,34 @@ Add +
 
 
 
-<!-- =============================== -->
-<!-- CART BUTTON -->
-<!-- =============================== -->
+<!-- CART BAR -->
 
-<div onclick="openCart()"
-class="fixed bottom-6 right-6 bg-black text-white px-6 py-3 rounded-full shadow-xl cursor-pointer">
+<div id="cart-bar"
+class="hidden fixed bottom-0 left-0 right-0 bg-black text-white p-4 flex justify-between items-center">
 
-Cart (<span id="cart-count">0</span>)
+<div>
+
+<span id="cart-count">0</span> items
+
+</div>
+
+<button onclick="openCart()"
+class="bg-green-500 px-6 py-2 rounded-lg">
+
+View Cart
+
+</button>
 
 </div>
 
 
 
-<!-- =============================== -->
 <!-- CART DRAWER -->
-<!-- =============================== -->
 
 <div id="cart-drawer"
-class="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#1a1a1a] shadow-2xl p-6 hidden">
+class="fixed bottom-0 left-0 right-0 bg-white shadow-2xl p-6 hidden">
 
-<h2 class="text-lg font-semibold mb-4 dark:text-white">
+<h2 class="text-lg font-semibold mb-4">
 Your Order
 </h2>
 
@@ -188,38 +174,11 @@ Place Order
 
 
 
-<!-- =============================== -->
-<!-- JAVASCRIPT -->
-<!-- =============================== -->
-
 <script>
 
 let cart=[]
-
 const tableNumber=Number("{{ table.number }}")
 
-
-/* ============================= */
-/* THEME TOGGLE */
-/* ============================= */
-
-function toggleTheme(){
-
-document.documentElement.classList.toggle('dark')
-
-localStorage.theme=
-document.documentElement.classList.contains('dark')?'dark':'light'
-
-}
-
-if(localStorage.theme==='dark'){
-document.documentElement.classList.add('dark')
-}
-
-
-/* ============================= */
-/* SCROLL TO CATEGORY */
-/* ============================= */
 
 function scrollToCategory(id){
 
@@ -238,10 +197,6 @@ el.scrollIntoView({behavior:"smooth"})
 
 
 
-/* ============================= */
-/* ADD TO CART */
-/* ============================= */
-
 function addToCart(id,name,price){
 
 let existing=cart.find(i=>i.id===id)
@@ -258,14 +213,13 @@ updateCart()
 
 
 
-/* ============================= */
-/* UPDATE CART UI */
-/* ============================= */
-
 function updateCart(){
 
-document.getElementById("cart-count").innerText=
-cart.reduce((sum,item)=>sum+item.quantity,0)
+const count=cart.reduce((sum,item)=>sum+item.quantity,0)
+
+document.getElementById("cart-count").innerText=count
+
+document.getElementById("cart-bar").classList.remove("hidden")
 
 const container=document.getElementById("cart-items")
 
@@ -280,15 +234,14 @@ container.innerHTML+=`
 <div>
 
 <p class="font-medium">${item.name}</p>
-
 <p>₦${item.price}</p>
 
 </div>
 
-<div class="flex gap-2 items-center">
+<div class="flex items-center gap-2">
 
 <button onclick="changeQty('${item.id}',-1)"
-class="px-2 bg-gray-300 rounded">−</button>
+class="px-2 bg-gray-300 rounded">-</button>
 
 <span>${item.quantity}</span>
 
@@ -306,10 +259,6 @@ class="px-2 bg-gray-300 rounded">+</button>
 }
 
 
-
-/* ============================= */
-/* CHANGE QUANTITY */
-/* ============================= */
 
 function changeQty(id,delta){
 
@@ -329,10 +278,6 @@ updateCart()
 
 
 
-/* ============================= */
-/* OPEN CART */
-/* ============================= */
-
 function openCart(){
 
 document.getElementById("cart-drawer").classList.toggle("hidden")
@@ -341,19 +286,7 @@ document.getElementById("cart-drawer").classList.toggle("hidden")
 
 
 
-/* ============================= */
-/* PLACE ORDER */
-/* ============================= */
-
 function placeOrder(){
-
-if(cart.length===0){
-
-alert("Cart empty")
-
-return
-
-}
 
 fetch("/create-order/",{
 
@@ -385,10 +318,6 @@ window.location.href=data.redirect_url
 
 
 
-/* ============================= */
-/* CSRF TOKEN */
-/* ============================= */
-
 function getCookie(name){
 
 let cookieValue=null
@@ -404,7 +333,6 @@ const cookie=cookies[i].trim()
 if(cookie.substring(0,name.length+1)===(name+'=')){
 
 cookieValue=decodeURIComponent(cookie.substring(name.length+1))
-
 break
 
 }
@@ -420,5 +348,4 @@ return cookieValue
 </script>
 
 </body>
-
 </html>
