@@ -154,12 +154,21 @@ View Cart
 
 <!-- CART DRAWER -->
 
+<!-- CART DRAWER -->
 <div id="cart-drawer"
 class="fixed bottom-0 left-0 right-0 bg-white shadow-2xl p-6 hidden">
 
-<h2 class="text-lg font-semibold mb-4">
+<div class="flex justify-between items-center mb-4">
+
+<h2 class="text-lg font-semibold">
 Your Order
 </h2>
+
+<button onclick="closeCart()" class="text-gray-500 text-sm">
+Close
+</button>
+
+</div>
 
 <div id="cart-items" class="space-y-4"></div>
 
@@ -171,8 +180,6 @@ Place Order
 </button>
 
 </div>
-
-
 
 <script>
 
@@ -276,15 +283,9 @@ updateCart()
 
 }
 
-
-
 function openCart(){
-
-document.getElementById("cart-drawer").classList.toggle("hidden")
-
+document.getElementById("cart-drawer").classList.remove("hidden")
 }
-
-
 
 function placeOrder(){
 
@@ -309,7 +310,7 @@ items:cart
 .then(res=>res.json())
 
 .then(data=>{
-
+closeCart()
 window.location.href=data.redirect_url
 
 })
@@ -343,6 +344,10 @@ break
 
 return cookieValue
 
+}
+
+function closeCart(){
+document.getElementById("cart-drawer").classList.add("hidden")
 }
 
 </script>
