@@ -17,7 +17,7 @@ extend:{
 colors:{
 navy:"#0f1c2e",
 gold:"#d4af37",
-ash:"#f5f5f5"
+ash:"#9ca3af"
 }
 }
 }
@@ -30,18 +30,21 @@ html{
 scroll-behavior:smooth;
 }
 
+/* Hide scrollbar */
+
 ::-webkit-scrollbar{
 display:none;
 }
 
-/* FIX category scroll landing */
+/* Fix category scroll position */
+
 .category-section{
 scroll-margin-top:120px;
 }
 
 .active-category{
-background:#0f1c2e;
-color:white;
+background:#d4af37;
+color:black;
 }
 
 </style>
@@ -49,13 +52,15 @@ color:white;
 </head>
 
 
-<body class="bg-ash">
+
+<body class="bg-[#0b1220] text-gray-200">
+
 
 <!-- ========================= -->
 <!-- HOTEL HEADER -->
 <!-- ========================= -->
 
-<div class="bg-navy text-white text-center py-6">
+<div class="bg-navy text-white text-center py-6 border-b border-gray-800">
 
 <img src="/static/logo/brandon-logo.png"
 class="w-20 mx-auto mb-2">
@@ -64,7 +69,7 @@ class="w-20 mx-auto mb-2">
 Brandon Hotel & Apartments
 </h1>
 
-<p class="text-sm text-gray-300">
+<p class="text-sm text-gray-400">
 Table {{ table.number }} Menu
 </p>
 
@@ -76,13 +81,13 @@ Table {{ table.number }} Menu
 <!-- CATEGORY BAR -->
 <!-- ========================= -->
 
-<div class="sticky top-0 bg-white border-b z-50">
+<div class="sticky top-0 bg-[#0f1c2e] border-b border-gray-800 z-50">
 
 <div id="category-bar"
 class="flex gap-3 overflow-x-auto px-4 py-3">
 
 <button onclick="scrollToCategory('all')"
-class="category-btn px-4 py-2 bg-navy text-white rounded-full text-sm">
+class="category-btn px-4 py-2 bg-gold text-black rounded-full text-sm">
 
 All
 
@@ -93,7 +98,7 @@ All
 <button
 data-category="{{ category.id }}"
 onclick="scrollToCategory('{{ category.id }}')"
-class="category-btn px-4 py-2 bg-gray-200 rounded-full text-sm">
+class="category-btn px-4 py-2 bg-[#1f2937] rounded-full text-sm text-gray-200">
 
 {{ category.name }}
 
@@ -108,16 +113,16 @@ class="category-btn px-4 py-2 bg-gray-200 rounded-full text-sm">
 
 
 <!-- ========================= -->
-<!-- MENU -->
+<!-- MENU ITEMS -->
 <!-- ========================= -->
 
-<div class="max-w-3xl mx-auto px-4 pb-20">
+<div class="max-w-3xl mx-auto px-4 pb-20 pt-6">
 
 {% for category in categories %}
 
 <div id="{{ category.id }}" class="category-section pt-10">
 
-<h2 class="text-xl font-semibold text-navy mb-6">
+<h2 class="text-xl font-semibold text-gold mb-6">
 
 {{ category.name }}
 
@@ -128,7 +133,9 @@ class="category-btn px-4 py-2 bg-gray-200 rounded-full text-sm">
 
 {% if item.category == category %}
 
-<div class="flex gap-4 items-center py-5 border-b">
+<div class="flex gap-4 items-center p-4 rounded-xl mb-4
+bg-[#111827] border border-gray-800
+hover:border-gold transition">
 
 <img src="{{ item.image.url }}"
 class="w-28 h-28 rounded-xl object-cover">
@@ -139,10 +146,11 @@ class="w-28 h-28 rounded-xl object-cover">
 <div class="flex items-center gap-2">
 
 <h3 class="font-semibold text-lg">
+
 {{ item.name }}
+
 </h3>
 
-<!-- BEST SELLER BADGE -->
 <span class="text-xs bg-gold text-black px-2 py-1 rounded">
 
 Popular
@@ -152,8 +160,10 @@ Popular
 </div>
 
 
-<p class="text-gray-500 text-sm mt-1">
+<p class="text-gray-400 text-sm mt-1">
+
 Freshly prepared meal
+
 </p>
 
 
@@ -245,4 +255,5 @@ btn.classList.add("active-category")
 </script>
 
 </body>
+
 </html>
