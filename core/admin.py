@@ -24,6 +24,8 @@ class TableAdmin(admin.ModelAdmin):
             return mark_safe(f'<img src="{obj.qr_code.url}" width="80"/>')
         return "No QR"
 
-
+class MenuItemAdmin(admin.ModelAdmin):
+    list_display = ('name', 'category', 'price', 'available')
+    list_filter = ('category', 'available')
+    search_fields = ('name', 'description')
 admin.site.register(Category)
-admin.site.register(MenuItem)
