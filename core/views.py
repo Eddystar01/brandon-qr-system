@@ -16,13 +16,14 @@ def menu_view(request, table_number):
 
     table = get_object_or_404(Table, number=table_number)
 
-    categories = Category.objects.all()
+    categories = Category.objects.prefetch_related('menuitem_set')
+
     items = MenuItem.objects.filter(available=True)
 
     context = {
         "table": table,
         "categories": categories,
-        "items": items,
+        "items": items
     }
 
     return render(request, "core/menu.html", context)
