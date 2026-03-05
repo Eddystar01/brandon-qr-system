@@ -26,42 +26,41 @@ ash:"#9ca3af"
 
 <style>
 
-/* ============================= */
-/* GLOBAL PAGE STYLING */
-/* ============================= */
+/* ========================= */
+/* GLOBAL SETTINGS */
+/* ========================= */
 
 html{
 scroll-behavior:smooth;
 }
 
-/* Hide all scrollbars */
+/* Hide scrollbar */
 
 ::-webkit-scrollbar{
 display:none;
 }
 
-/* ============================= */
+
+/* ========================= */
 /* FOOD TEXTURE BACKGROUND */
-/* ============================= */
+/* ========================= */
 
 body{
 
 background-color:#0b1220;
 
-/* food image background */
+/* lighter overlay so food shows */
 
 background-image:
 
-linear-gradient(rgba(11,18,32,0.93),rgba(11,18,32,0.96)),
+linear-gradient(rgba(11,18,32,0.85), rgba(11,18,32,0.92)),
 
 url("https://images.unsplash.com/photo-1550547660-d9450f859349");
 
-/* adjust image */
+/* layout */
 
 background-size:cover;
-
 background-position:center;
-
 background-attachment:fixed;
 
 color:#e5e7eb;
@@ -69,18 +68,18 @@ color:#e5e7eb;
 }
 
 
-/* ============================= */
-/* CATEGORY SCROLL FIX */
-/* ============================= */
+/* ========================= */
+/* CATEGORY SECTION OFFSET */
+/* ========================= */
 
 .category-section{
 scroll-margin-top:130px;
 }
 
 
-/* ============================= */
-/* ACTIVE CATEGORY BUTTON */
-/* ============================= */
+/* ========================= */
+/* ACTIVE CATEGORY */
+/* ========================= */
 
 .active-category{
 background:#d4af37;
@@ -88,23 +87,25 @@ color:black;
 }
 
 
-/* ============================= */
-/* MENU CARD GLOW EFFECT */
-/* ============================= */
+/* ========================= */
+/* MENU CARD */
+/* ========================= */
 
 .menu-card{
 
-background:rgba(17,24,39,0.9);
+background:rgba(17,24,39,0.85);
 
 border:1px solid rgba(255,255,255,0.05);
+
+border-radius:14px;
+
+transition:all .3s ease;
 
 box-shadow:
 
 0 0 0 rgba(212,175,55,0),
 
 0 0 40px rgba(212,175,55,0.05);
-
-transition:all .3s ease;
 
 }
 
@@ -114,14 +115,36 @@ border-color:#d4af37;
 
 box-shadow:
 
-0 0 20px rgba(212,175,55,0.15);
+0 0 25px rgba(212,175,55,0.25);
 
 }
 
 
-/* ============================= */
-/* DESCRIPTION TEXT LIMIT */
-/* ============================= */
+/* ========================= */
+/* GOLD CATEGORY DIVIDER */
+/* ========================= */
+
+.category-divider{
+
+height:1px;
+
+margin:60px 0;
+
+background:
+
+linear-gradient(
+to right,
+transparent,
+rgba(212,175,55,0.5),
+transparent
+);
+
+}
+
+
+/* ========================= */
+/* DESCRIPTION CLAMP */
+/* ========================= */
 
 .lineclamp-2{
 display:-webkit-box;
@@ -140,11 +163,11 @@ overflow:hidden;
 
 
 
-<!-- ============================= -->
+<!-- ========================= -->
 <!-- HOTEL HEADER -->
-<!-- ============================= -->
+<!-- ========================= -->
 
-<div class="bg-navy text-center py-6 border-b border-gray-800">
+<div class="bg-navy/90 backdrop-blur text-center py-6 border-b border-gray-800">
 
 <img src="/static/logo/brandon-logo.png"
 class="w-20 mx-auto mb-2">
@@ -161,9 +184,9 @@ Table {{ table.number }} Menu
 
 
 
-<!-- ============================= -->
-<!-- CATEGORY NAVIGATION -->
-<!-- ============================= -->
+<!-- ========================= -->
+<!-- CATEGORY NAV BAR -->
+<!-- ========================= -->
 
 <div class="sticky top-0 bg-[#0f1c2e]/95 backdrop-blur border-b border-gray-800 z-50">
 
@@ -196,9 +219,9 @@ class="category-btn flex-shrink-0 px-5 py-3 bg-[#1f2937] rounded-full text-sm te
 
 
 
-<!-- ============================= -->
-<!-- MENU ITEMS CONTAINER -->
-<!-- ============================= -->
+<!-- ========================= -->
+<!-- MENU CONTAINER -->
+<!-- ========================= -->
 
 <div class="max-w-3xl mx-auto px-4 pb-20 pt-6">
 
@@ -214,18 +237,17 @@ class="category-btn flex-shrink-0 px-5 py-3 bg-[#1f2937] rounded-full text-sm te
 </h2>
 
 
-
 {% for item in items %}
 
 {% if item.category == category %}
 
 
 
-<!-- ============================= -->
+<!-- ========================= -->
 <!-- MENU CARD -->
-<!-- ============================= -->
+<!-- ========================= -->
 
-<div class="menu-card flex gap-4 items-center p-4 rounded-xl mb-4">
+<div class="menu-card flex gap-4 items-center p-4 mb-4">
 
 <img src="{{ item.image.url }}"
 class="w-28 h-28 rounded-xl object-cover">
@@ -240,9 +262,6 @@ class="w-28 h-28 rounded-xl object-cover">
 </h3>
 
 
-
-<!-- OPTIONAL DESCRIPTION -->
-
 {% if item.description %}
 
 <p class="text-gray-400 text-sm mt-1 lineclamp-2">
@@ -252,7 +271,6 @@ class="w-28 h-28 rounded-xl object-cover">
 </p>
 
 {% endif %}
-
 
 
 <p class="mt-3 font-bold text-gold text-lg">
@@ -269,6 +287,13 @@ class="w-28 h-28 rounded-xl object-cover">
 
 {% endfor %}
 
+
+
+<!-- GOLD CATEGORY DIVIDER -->
+
+<div class="category-divider"></div>
+
+
 </div>
 
 {% endfor %}
@@ -280,9 +305,9 @@ class="w-28 h-28 rounded-xl object-cover">
 <script>
 
 
-/* ============================= */
-/* CATEGORY SCROLL FUNCTION */
-/* ============================= */
+/* ========================= */
+/* CATEGORY SCROLL */
+/* ========================= */
 
 function scrollToCategory(id){
 
@@ -306,9 +331,9 @@ block:"start"
 
 
 
-/* ============================= */
+/* ========================= */
 /* AUTO CATEGORY HIGHLIGHT */
-/* ============================= */
+/* ========================= */
 
 const sections=document.querySelectorAll(".category-section")
 
