@@ -216,8 +216,6 @@ class="w-28 h-28 rounded-xl object-cover">
 
 <script>
 
-/* CATEGORY SCROLL */
-
 function scrollToCategory(id){
 
 if(id==="all"){
@@ -228,23 +226,20 @@ return
 const el=document.getElementById(id)
 
 if(el){
-
 el.scrollIntoView({
 behavior:"smooth",
 block:"start"
 })
-
 }
 
 }
-
 
 
 /* AUTO CATEGORY HIGHLIGHT */
 
 const sections=document.querySelectorAll(".category-section")
-
 const buttons=document.querySelectorAll(".category-btn")
+const categoryBar=document.getElementById("category-bar")
 
 window.addEventListener("scroll",()=>{
 
@@ -255,9 +250,7 @@ sections.forEach(section=>{
 const sectionTop=section.offsetTop-150
 
 if(scrollY>=sectionTop){
-
 current=section.getAttribute("id")
-
 }
 
 })
@@ -269,6 +262,14 @@ btn.classList.remove("active-category")
 if(btn.dataset.category===current){
 
 btn.classList.add("active-category")
+
+/* CENTER ACTIVE CATEGORY */
+
+btn.scrollIntoView({
+behavior:"smooth",
+inline:"center",
+block:"nearest"
+})
 
 }
 
