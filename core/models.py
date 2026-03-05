@@ -43,6 +43,7 @@ class MenuItem(models.Model):
     image = models.ImageField(upload_to='menu/')
     available = models.BooleanField(default=True)
     is_popular = models.BooleanField(default=False)
+    is_chef_special = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

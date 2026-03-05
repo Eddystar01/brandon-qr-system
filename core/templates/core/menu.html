@@ -1,23 +1,74 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
 
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- ===============================
+PAGE META
+Controls mobile responsiveness
+================================ -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<!-- ===============================
+PAGE TITLE
+Change this if hotel name changes
+================================ -->
+
+<title>Menu | Brandon Hotel & Apartments</title>
+
+
+<!-- ===============================
+TAILWIND CSS CDN
+Used for styling the UI
+================================ -->
 
 <script src="https://cdn.tailwindcss.com"></script>
 
+
+<!-- ===============================
+CUSTOM COLORS
+Brand colors defined here
+Edit here if branding changes
+================================ -->
+
+<script>
+tailwind.config = {
+theme:{
+extend:{
+colors:{
+navy:"#0f1c2e",
+gold:"#d4af37"
+}
+}
+}
+}
+</script>
+
+
+
+<!-- ===============================
+CUSTOM STYLES
+Animations / background / card effects
+================================ -->
+
 <style>
 
+/* PAGE BACKGROUND */
 body{
 background:linear-gradient(180deg,#081524,#040c18);
 color:white;
 }
 
+/* CATEGORY BUTTONS
+Prevents shrinking on mobile scroll */
 .category-btn{
 flex-shrink:0;
 }
 
+/* FOOD CARD HOVER ANIMATION */
 .food-card{
 transition:0.25s;
 }
@@ -26,27 +77,57 @@ transition:0.25s;
 transform:translateY(-3px);
 }
 
+/* IMAGE ZOOM EFFECT */
+.food-card img{
+transition:0.3s;
+}
+
+.food-card:hover img{
+transform:scale(1.05);
+}
+
+/* DESCRIPTION TEXT CLAMP
+Limits long text to 2 lines */
+.line-clamp-2{
+display:-webkit-box;
+-webkit-line-clamp:2;
+-webkit-box-orient:vertical;
+overflow:hidden;
+}
+
 </style>
 
 </head>
 
+
+
 <body>
 
-<!-- HERO -->
+<!-- =====================================================
+HERO SECTION
+Top section with blurred food image and restaurant name
+You can replace image URL anytime
+===================================================== -->
 
 <div class="relative h-64 overflow-hidden">
 
+<!-- Background food image -->
 <img src="https://images.unsplash.com/photo-1604908554007-8cced9f6c1d0"
 class="absolute w-full h-full object-cover blur-sm opacity-40">
 
+<!-- Restaurant branding -->
 <div class="relative text-center pt-12">
 
 <h1 class="text-2xl font-semibold">
+
 Brandon Hotel & Apartments
+
 </h1>
 
 <p class="text-gray-300">
+
 Table {{ table.number }} Menu
+
 </p>
 
 </div>
@@ -54,37 +135,66 @@ Table {{ table.number }} Menu
 </div>
 
 
-<!-- SEARCH -->
+
+<!-- =====================================================
+SEARCH BAR
+Allows customer to search meals
+===================================================== -->
 
 <div class="px-4 mt-4">
 
 <input
+
 id="search"
+
 placeholder="Search meals..."
-class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700">
+
+class="w-full p-3 rounded-lg bg-gray-800 border border-gray-700"
+
+>
 
 </div>
 
 
-<!-- CATEGORY BAR -->
+
+<!-- =====================================================
+CATEGORY NAVIGATION BAR
+Sticky horizontal category navigation
+Add icons here if desired
+===================================================== -->
 
 <div class="sticky top-0 bg-[#081524] z-20 mt-4">
 
 <div class="flex gap-3 overflow-x-auto px-4 py-3">
 
-<button onclick="scrollToCategory('all')"
-class="category-btn px-5 py-2 bg-gold text-black rounded-full">
+
+<!-- ALL CATEGORY BUTTON -->
+<button
+
+onclick="scrollToCategory('all')"
+
+class="category-btn px-5 py-2 bg-gold text-black rounded-full"
+
+>
 
 All
 
 </button>
 
+
+<!-- LOOP THROUGH CATEGORIES -->
+
 {% for category in categories %}
 
 <button
+
 data-category="{{ category.id }}"
+
 onclick="scrollToCategory('{{ category.id }}')"
-class="category-btn px-5 py-2 bg-gray-800 rounded-full">
+
+class="category-btn px-5 py-2 bg-gray-800 rounded-full"
+
+>
 
 {{ category.name }}
 
@@ -97,61 +207,40 @@ class="category-btn px-5 py-2 bg-gray-800 rounded-full">
 </div>
 
 
-<!-- MENU -->
 
-<div class="max-w-3xl mx-auto px-4 pb-20">
+<!-- =====================================================
+DAILY SPECIALS SECTION
+Displays chef recommended items
+Controlled using is_chef_special in admin
+===================================================== -->
 
-{% for category in categories %}
+<div class="max-w-3xl mx-auto px-4 mt-6">
 
-<div id="{{ category.id }}" class="pt-10">
+<h2 class="text-gold text-lg mb-3">
 
-<h2 class="text-xl text-gold mb-6">
-{{ category.name }}
+Today's Specials
+
 </h2>
+
+<div class="flex gap-4 overflow-x-auto pb-4">
 
 {% for item in items %}
 
-{% if item.category == category %}
+{% if item.is_chef_special %}
 
-<div class="food-card flex gap-4 bg-[#111827] p-4 rounded-xl mb-4">
+<div class="min-w-[220px] bg-[#111827] rounded-xl overflow-hidden">
 
-<img
-src="{{ item.image.url }}"
-class="w-28 h-28 object-cover rounded-xl">
+<img src="{{ item.image.url }}" class="w-full h-32 object-cover">
 
-<div class="flex-1">
+<div class="p-3">
 
-<div class="flex justify-between">
-
-<h3 class="font-semibold">
+<p class="font-semibold">
 
 {{ item.name }}
 
-</h3>
-
-{% if item.is_popular %}
-
-<span class="text-xs bg-gold text-black px-2 rounded">
-
-Popular
-
-</span>
-
-{% endif %}
-
-</div>
-
-{% if item.description %}
-
-<p class="text-sm text-gray-400 mt-1 line-clamp-2">
-
-{{ item.description }}
-
 </p>
 
-{% endif %}
-
-<p class="text-gold mt-3 font-bold">
+<p class="text-gold font-bold">
 
 ₦{{ item.price }}
 
@@ -167,43 +256,210 @@ Popular
 
 </div>
 
+</div>
+
+
+
+<!-- =====================================================
+MAIN MENU SECTION
+Displays categories and menu items
+===================================================== -->
+
+<div class="max-w-3xl mx-auto px-4 pb-20">
+
+
+<!-- LOOP THROUGH CATEGORIES -->
+
+{% for category in categories %}
+
+<div id="{{ category.id }}" class="pt-10">
+
+<h2 class="text-xl text-gold mb-6">
+
+{{ category.name }}
+
+</h2>
+
+
+<!-- LOOP THROUGH MENU ITEMS -->
+
+{% for item in items %}
+
+{% if item.category == category %}
+
+
+<!-- FOOD CARD -->
+
+<div class="food-card flex gap-4 bg-[#111827] p-4 rounded-xl mb-4
+
+{% if not item.available %}opacity-40{% endif %}
+
+">
+
+
+<!-- FOOD IMAGE -->
+
+<img
+
+src="{{ item.image.url }}"
+
+class="w-28 h-28 object-cover rounded-xl"
+
+
+>
+
+
+<!-- FOOD INFO -->
+
+<div class="flex-1">
+
+
+<!-- FOOD TITLE + BADGES -->
+
+<div class="flex justify-between items-center">
+
+<h3 class="font-semibold">
+
+{{ item.name }}
+
+</h3>
+
+<div class="flex gap-2">
+
+{% if item.is_chef_special %}
+
+<span class="text-xs bg-yellow-500 text-black px-2 py-1 rounded">
+
+Chef Special
+
+</span>
+
+{% endif %}
+
+
+{% if item.is_popular %}
+
+<span class="text-xs bg-gold text-black px-2 py-1 rounded">
+
+Popular
+
+</span>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+
+<!-- DESCRIPTION -->
+
+{% if item.description %}
+
+<p class="text-sm text-gray-400 mt-1 line-clamp-2">
+
+{{ item.description }}
+
+</p>
+
+{% endif %}
+
+
+
+<!-- PRICE -->
+
+<p class="text-gold mt-3 font-bold">
+
+₦{{ item.price }}
+
+</p>
+
+
+
+<!-- UNAVAILABLE MESSAGE -->
+
+{% if not item.available %}
+
+<p class="text-red-400 text-sm mt-1">
+
+Currently unavailable
+
+</p>
+
+{% endif %}
+
+</div>
+
+</div>
+
+
+{% endif %}
+
+{% endfor %}
+
+</div>
+
 {% endfor %}
 
 </div>
 
 
-<!-- FOOTER -->
+
+<!-- =====================================================
+FOOTER
+Restaurant closing message
+===================================================== -->
 
 <div class="text-center text-gray-400 pb-12">
 
 <p>
+
 Thank you for dining with Brandon Hotel & Apartments
+
 </p>
 
 <p class="text-sm mt-2">
+
 Please call a waiter to place your order
+
 </p>
 
 </div>
 
 
+
+<!-- =====================================================
+JAVASCRIPT FUNCTIONS
+Scroll navigation and search filter
+===================================================== -->
+
 <script>
+
+
+/* CATEGORY SCROLL FUNCTION */
 
 function scrollToCategory(id){
 
 if(id==="all"){
+
 window.scrollTo({top:0,behavior:"smooth"})
+
 return
+
 }
 
 document.getElementById(id).scrollIntoView({
+
 behavior:"smooth"
+
 })
 
 }
 
 
-/* SEARCH */
+
+/* SEARCH FUNCTION */
 
 const search=document.getElementById("search")
 
@@ -223,5 +479,7 @@ card.style.display=text.includes(value) ? "flex":"none"
 
 </script>
 
+
 </body>
+
 </html>
