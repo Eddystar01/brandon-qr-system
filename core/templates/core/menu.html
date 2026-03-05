@@ -92,7 +92,7 @@ Table {{ table.number }} Menu
 <div class="sticky top-0 bg-[#0f1c2e] border-b border-gray-800 z-50">
 
 <div id="category-bar"
-class="flex gap-3 overflow-x-auto px-4 py-3">
+class="flex gap-4 overflow-x-auto px-4 py-4">
 
 <button onclick="scrollToCategory('all')"
 class="category-btn px-4 py-2 bg-gold text-black rounded-full text-sm">
@@ -106,7 +106,7 @@ All
 <button
 data-category="{{ category.id }}"
 onclick="scrollToCategory('{{ category.id }}')"
-class="category-btn px-4 py-2 bg-[#1f2937] rounded-full text-sm text-gray-200">
+class="category-btn flex-shrink-0 px-5 py-3 bg-[#1f2937] rounded-full text-sm text-gray-200 whitespace-nowrap">
 
 {{ category.name }}
 
