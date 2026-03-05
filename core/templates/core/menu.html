@@ -20,8 +20,7 @@ gold:"#d4af37",
 ash:"#9ca3af"
 }
 }
-},
-plugins:[]
+}
 }
 </script>
 
@@ -31,7 +30,36 @@ html{
 scroll-behavior:smooth;
 }
 
-/* REMOVE SCROLLBAR COMPLETELY */
+/* ===================== */
+/* BODY FOOD BACKGROUND */
+/* ===================== */
+
+body::before{
+
+content:"";
+
+position:fixed;
+
+inset:0;
+
+background-image:url("https://images.unsplash.com/photo-1604908554007-8cced9f6c1d0");
+
+background-size:cover;
+
+background-position:center;
+
+filter:blur(18px);
+
+opacity:0.08;
+
+z-index:-1;
+
+}
+
+
+/* ===================== */
+/* REMOVE CATEGORY SCROLLBAR */
+/* ===================== */
 
 #category-bar::-webkit-scrollbar{
 display:none;
@@ -41,20 +69,30 @@ display:none;
 scrollbar-width:none;
 }
 
-/* CATEGORY SCROLL POSITION FIX */
+
+/* ===================== */
+/* CATEGORY SCROLL FIX */
+/* ===================== */
 
 .category-section{
 scroll-margin-top:120px;
 }
 
+
+/* ===================== */
 /* ACTIVE CATEGORY STYLE */
+/* ===================== */
 
 .active-category{
 background:#d4af37;
 color:black;
+box-shadow:0 0 8px rgba(212,175,55,0.6);
 }
 
+
+/* ===================== */
 /* DESCRIPTION CLAMP */
+/* ===================== */
 
 .line-clamp-2{
 display:-webkit-box;
@@ -72,20 +110,6 @@ overflow:hidden;
 <body class="bg-[#0b1220] text-gray-200">
 
 
-<!-- ========================= -->
-<!-- HERO FOOD BACKGROUND -->
-<!-- ========================= -->
-
-<div class="relative h-52 overflow-hidden">
-
-<img src="https://images.unsplash.com/photo-1604908554007-8cced9f6c1d0"
-class="absolute w-full h-full object-cover blur-sm opacity-30">
-
-<div class="absolute inset-0 bg-gradient-to-b from-transparent to-[#0b1220]"></div>
-
-</div>
-
-
 
 <!-- ========================= -->
 <!-- HOTEL HEADER -->
@@ -97,11 +121,15 @@ class="absolute w-full h-full object-cover blur-sm opacity-30">
 class="w-20 mx-auto mb-2">
 
 <h1 class="text-xl font-semibold">
+
 Brandon Hotel & Apartments
+
 </h1>
 
 <p class="text-sm text-gray-400">
+
 Table {{ table.number }} Menu
+
 </p>
 
 </div>
@@ -123,6 +151,7 @@ class="category-btn px-4 py-2 bg-gold text-black rounded-full text-sm">
 All
 
 </button>
+
 
 {% for category in categories %}
 
@@ -216,6 +245,10 @@ class="w-28 h-28 rounded-xl object-cover">
 
 <script>
 
+/* ========================= */
+/* CATEGORY CLICK SCROLL */
+/* ========================= */
+
 function scrollToCategory(id){
 
 if(id==="all"){
@@ -226,19 +259,26 @@ return
 const el=document.getElementById(id)
 
 if(el){
+
 el.scrollIntoView({
 behavior:"smooth",
 block:"start"
 })
-}
 
 }
 
+}
 
+
+
+/* ============================ */
 /* AUTO CATEGORY HIGHLIGHT */
+/* ============================ */
 
 const sections=document.querySelectorAll(".category-section")
+
 const buttons=document.querySelectorAll(".category-btn")
+
 const categoryBar=document.getElementById("category-bar")
 
 window.addEventListener("scroll",()=>{
@@ -250,10 +290,13 @@ sections.forEach(section=>{
 const sectionTop=section.offsetTop-150
 
 if(scrollY>=sectionTop){
+
 current=section.getAttribute("id")
+
 }
 
 })
+
 
 buttons.forEach(btn=>{
 
@@ -262,8 +305,6 @@ btn.classList.remove("active-category")
 if(btn.dataset.category===current){
 
 btn.classList.add("active-category")
-
-/* CENTER ACTIVE CATEGORY */
 
 btn.scrollIntoView({
 behavior:"smooth",
