@@ -1,11 +1,13 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
-{% block title %}Brandon Hotel Admin{% endblock %}
+{% block extrastyle %}
+<link rel="stylesheet" href="{% static 'admin/custom_admin.css' %}">
+{% endblock %}
 
 {% block branding %}
-<h1 id="site-name" style="display:flex;align-items:center;gap:10px;">
-    <img src="{% static 'admin/logo.png' %}" height="35">
-    Brandon Hotel & Apartments
+<h1 id="site-name" style="display:flex;align-items:center;gap:12px;">
+    <img src="{% static 'admin/logo.png' %}" height="40">
+    <span style="color:#d4af37;">Brandon Hotel & Apartments</span>
 </h1>
 {% endblock %}

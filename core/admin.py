@@ -36,4 +36,5 @@ from django.contrib import admin
 
 admin.site.site_header = "Brandon Hotel & Apartments"
 admin.site.site_title = "Brandon Admin"
-admin.site.index_title = "Brandon Hotel &Management"
+admin.site.index_title = "🍽 Restaurant Management"
+

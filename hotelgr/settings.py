@@ -140,9 +140,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = []
 
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/kitchen/'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/admin/'
+LOGOUT_REDIRECT_URL = '/admin/login/'
 
 # Security Hardening
 SECURE_BROWSER_XSS_FILTER = True

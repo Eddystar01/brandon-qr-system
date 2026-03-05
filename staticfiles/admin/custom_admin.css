@@ -1,0 +1,42 @@
+/* MAIN BACKGROUND */
+body {
+    background-color: #0b1220;
+}
+
+/* TOP BAR */
+#header {
+    background: #0f1c2e;
+}
+
+/* HEADER TEXT */
+#header a:link,
+#header a:visited {
+    color: #d4af37;
+}
+
+/* BUTTONS */
+.button,
+input[type=submit],
+input[type=button],
+.submit-row input {
+    background: #d4af37;
+    border-color: #d4af37;
+    color: black;
+}
+
+/* BUTTON HOVER */
+.button:hover,
+input[type=submit]:hover {
+    background: #c39b2d;
+}
+
+/* MODULE HEADERS */
+.module h2,
+.module caption {
+    background: #0f1c2e;
+}
+
+/* TABLE ROW HOVER */
+#changelist table tbody tr:hover {
+    background: #1f2937;
+}
