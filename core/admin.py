@@ -2,7 +2,6 @@ from django.contrib import admin
 from .models import Table, Category, MenuItem, Order, OrderItem
 from django.utils.safestring import mark_safe
 
-
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     extra = 0
@@ -29,10 +28,12 @@ class MenuItemAdmin(admin.ModelAdmin):
     list_filter = ('category', 'available')
     search_fields = ('name', 'description')
 
-admin.site.register(MenuItem, MenuItemAdmin)
-admin.site.register(Category)
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order')
+    ordering = ('order',)
 
-from django.contrib import admin
+admin.site.register(MenuItem, MenuItemAdmin)
 
 admin.site.site_header = "Brandon Hotel & Apartments"
 admin.site.site_title = "Brandon Admin"
