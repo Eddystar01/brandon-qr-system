@@ -153,7 +153,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://qr.brandonhotelandapartments.com"
 ]
 SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = False
+SECURE_SSL_REDIRECT = True
 
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": "dn8s0xipn",
