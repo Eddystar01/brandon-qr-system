@@ -144,6 +144,7 @@ LOGIN_REDIRECT_URL = '/admin/'
 LOGOUT_REDIRECT_URL = '/admin/login/'
 
 # Security Hardening
+USE_X_FORWARDED_HOST = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
@@ -152,7 +153,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://qr.brandonhotelandapartments.com"
 ]
 SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": "dn8s0xipn",
