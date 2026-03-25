@@ -16,7 +16,7 @@ if not SECRET_KEY:
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # More explicit DEBUG handling
-DEBUG = False
+DEBUG = True
 
 # Hosts allowed to serve the application
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'qr.brandonhotelandapartments.com,.onrender.com').split(',')
