@@ -15,7 +15,8 @@ if not SECRET_KEY:
     raise ValueError("SECRET_KEY environment variable not set")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# More explicit DEBUG handling
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1', 'yes']
 
 # Hosts allowed to serve the application
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'qr.brandonhotelandapartments.com,.onrender.com').split(',')
