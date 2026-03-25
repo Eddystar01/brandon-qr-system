@@ -3,6 +3,7 @@ Django settings for hotelgr project.
 """
 
 import os
+import sys
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -34,7 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',   # for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -63,7 +64,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'hotelgr.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 if os.environ.get("RENDER"):
     DATABASES = {
         'default': {
@@ -74,7 +74,7 @@ if os.environ.get("RENDER"):
             'HOST': os.environ.get('DB_HOST'),
             'PORT': os.environ.get('DB_PORT', '5432'),
             'OPTIONS': {
-                'sslmode': 'require',   # enforce SSL for PostgreSQL
+                'sslmode': 'require',
             },
         }
     }
@@ -88,10 +88,18 @@ else:
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
 # Internationalization
@@ -105,11 +113,11 @@ STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (Cloudinary)
+# Cloudinary configuration
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME', ''),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY', ''),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET', ''),
 }
 
 STORAGES = {
@@ -121,9 +129,6 @@ STORAGES = {
     },
 }
 
-# Remove deprecated DEFAULT_FILE_STORAGE if present
-# DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'  # not needed
-
 # Authentication
 LOGIN_URL = '/admin/login/'
 LOGIN_REDIRECT_URL = '/admin/'
@@ -131,31 +136,18 @@ LOGOUT_REDIRECT_URL = '/admin/login/'
 
 # Security settings (only in production)
 if not DEBUG:
-    # Security middleware
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
-
-    # HTTPS
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     USE_X_FORWARDED_HOST = True
-
-    # HSTS (optional, enable after confirming all assets are served over HTTPS)
-    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-
-    # Cookies
     CSRF_COOKIE_SECURE = True
     SESSION_COOKIE_SECURE = True
-
-    # CSRF trusted origins (allow both custom domain and Render default)
     CSRF_TRUSTED_ORIGINS = [
         'https://qr.brandonhotelandapartments.com',
-        'https://*.onrender.com',  # matches any Render subdomain
+        'https://*.onrender.com',
     ]
-
-# Make sure Cloudinary credentials are set
-if not all([CLOUDINARY_STORAGE['CLOUD_NAME'], CLOUDINARY_STORAGE['API_KEY'], CLOUDINARY_STORAGE['API_SECRET']]):
-    raise ValueError("Cloudinary credentials not fully set in environment variables")
